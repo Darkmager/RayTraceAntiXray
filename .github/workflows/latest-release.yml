@@ -1,4 +1,4 @@
-name: Build & Publish Latest Release
+name: Build RayTraceAntiXray (Paper 1.21.9 Mojang-mapped)
 
 on:
   workflow_dispatch:
@@ -10,28 +10,43 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
+    # Clone your raytrace repo
+    - uses: actions/checkout@v4
 
-      - name: Setup Java 21
-        uses: actions/setup-java@v4
-        with:
-          java-version: 21
-          distribution: temurin
+    - name: Install Java 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: 21
+        distribution: temurin
 
-      - name: Build
-        working-directory: ./RayTraceAntiXray
-        run: ../mvnw clean package
+    - name: Install build tools
+      run: sudo apt-get update && sudo apt-get install -y git maven
 
-      - name: Publish Latest Release
-        uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: latest
-          name: "Latest RayTraceAntiXray Build"
-          make_latest: true
-          overwrite_files: true
-          files: RayTraceAntiXray/target/*.jar   # <-- FIXED & CORRECT
+    # STEP 1: Clone Paper source
+    - name: Clone Paper source
+      run: git clone https://github.com/PaperMC/Paper.git PaperBuild --branch 1.21.9
+
+    # STEP 2: Build server (maps Mojang classes automatically)
+    - name: Build Paper 1.21.9 Mojang-mapped
+      working-directory: ./PaperBuild
+      run: ./gradlew publishToMavenLocal
+
+    # STEP 3: Build RayTraceAntiXray
+    - name: Build RayTraceAntiXray against Paper
+      working-directory: ./RayTraceAntiXray
+      run: ../mvnw -X clean package
+
+    # STEP 4: Upload to GitHub Release
+    - name: Upload Latest Release
+      uses: softprops/action-gh-release@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: latest
+        name: "Latest RayTraceAntiXray (Paper 1.21.9 Mojang-Mapped)"
+        make_latest: true
+        overwrite_files: true
+        files: RayTraceAntiXray/target/*.jar
+
 
 
