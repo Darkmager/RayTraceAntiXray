@@ -13,23 +13,23 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Setup Java 17
+      - name: Setup Java 21   # you already chose this
         uses: actions/setup-java@v4
         with:
           java-version: 21
           distribution: temurin
 
-      - name: Build using Maven Wrapper
+      # Build using mvnw because this repo has mvnw included
+      - name: Build RayTraceAntiXray
         run: ./mvnw clean package
 
-      # 🔥 Uploads jar to a single "latest" release every time
-      - name: Publish latest release
+      - name: Publish Latest
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: "latest"
-          release_name: "Latest Build"
+          release_name: "Latest RayTraceAntiXray Build"
           make_latest: true
           overwrite: true
-          files: RayTraceAntiXray-Plugin/target/*.jar
+          files: RayTraceAntiXray-Plugin/target/*.jar   # ← fixed
