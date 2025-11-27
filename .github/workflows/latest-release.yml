@@ -3,7 +3,7 @@ name: Build & Publish Latest Release
 on:
   workflow_dispatch:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
@@ -19,8 +19,9 @@ jobs:
           java-version: 21
           distribution: temurin
 
-      - name: Build project
-        run: ./mvnw clean package
+      - name: Build
+        working-directory: ./RayTraceAntiXray
+        run: ../mvnw clean package
 
       - name: Publish Latest Release
         uses: softprops/action-gh-release@v2
@@ -31,6 +32,6 @@ jobs:
           name: "Latest RayTraceAntiXray Build"
           make_latest: true
           overwrite_files: true
-          files: |
-            RayTraceAntiXray-Plugin/target/*.jar   # finally correct output!
+          files: RayTraceAntiXray/target/*.jar   # <-- FIXED & CORRECT
+
 
