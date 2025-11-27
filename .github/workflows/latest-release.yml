@@ -24,7 +24,7 @@ jobs:
 
     # STEP 1: Clone Paper source
     - name: Clone Paper source
-      run: git clone https://github.com/PaperMC/Paper.git PaperBuild --branch 1.21.9
+      run: git clone https://github.com/PaperMC/Paper.git PaperBuild
 
     # STEP 2: Build server (maps Mojang classes automatically)
     - name: Build Paper 1.21.9 Mojang-mapped
